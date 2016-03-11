@@ -24,18 +24,14 @@ public class WhammyController implements Runnable {
     public void setMIDIDevice(WhammyMIDIDevice pDevice) {
         device = pDevice;
     }
-
-
+    
+    
     public void setEffect(Effect pEffect) {
-        setEffect(pEffect, Constants.IGNORE_PEDAL_POSITION);
-    }
-    
-    
-    public void setEffect(Effect pEffect, int pPedalPosition) {
         int changeNumber;
+        int pedalPosition = pEffect.getPedalPosition();
         
         logger.info("Setting effect '" + pEffect + "', pedal at '" + 
-                    pPedalPosition + "'");
+                    pedalPosition + "'");
         if (pEffect instanceof BypassEffect)  {
             if (currentEffect == null) {
                 // First ever effect is bypass -> do nothing
@@ -50,8 +46,8 @@ public class WhammyController implements Runnable {
             currentEffect = pEffect;
         }
         //device.sendProgramChangeMessage(changeNumber);
-        if (pPedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
-            pPedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
+        if (pedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
+            pedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
             //device.sendContinuousControlMessage(pPedalPosition);
         }
     }
@@ -90,7 +86,7 @@ public class WhammyController implements Runnable {
     public void run() {
         try {
             Vector<Effect> enabledEffects = new Vector<Effect>();
-            Effect[] allEffects = whammy.getEffects();
+            Effect[] allEffects = whammy.getBuiltinEffects();
             
             for (int i = 0; i < allEffects.length; i++) {
                 if (allEffects[i].isEnabled()) {

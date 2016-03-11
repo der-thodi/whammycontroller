@@ -1,9 +1,17 @@
 package de.thodi.whammycontroller.effects;
 
-public class HarmonyEffect extends Effect {
+import de.thodi.whammycontroller.Constants;
 
+public class HarmonyEffect extends Effect {
+    
+    public HarmonyEffect(String pDescription, int pActive, int pBypass,
+                         int pPedalPosition) {
+        super(pDescription, pActive, pBypass, pPedalPosition);
+    }
+    
+    
     public HarmonyEffect(String pDescription, int pActive, int pBypass) {
-        super(pDescription, pActive, pBypass);
+        this(pDescription, pActive, pBypass, Constants.IGNORE_PEDAL_POSITION);
     }
 
 

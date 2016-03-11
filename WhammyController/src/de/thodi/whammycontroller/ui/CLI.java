@@ -17,7 +17,7 @@ public class CLI {
         Whammy w = new WhammyBass2014();
         w.setMode(Constants.WHAMMY_MODE_CLASSIC);
         WhammyController c = new WhammyController(w);
-        Effect[] e = w.getEffects();
+        Effect[] e = w.getBuiltinEffects();
 
         WhammyMIDIDevice[] devices = WhammyMIDIDevice.getSupportedDevices();
         if (devices.length > 0) {

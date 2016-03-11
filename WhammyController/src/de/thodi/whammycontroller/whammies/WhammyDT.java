@@ -55,7 +55,7 @@ public class WhammyDT extends Whammy {
 
 
     @Override
-    public Effect[] getEffects() {
+    public Effect[] getBuiltinEffects() {
         return effects;
     }
 }

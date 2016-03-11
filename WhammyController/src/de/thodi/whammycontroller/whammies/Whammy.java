@@ -6,7 +6,8 @@ import java.util.logging.*;
 public class Whammy {
 
     protected Logger logger = Logger.getLogger("de.thodi.whammycontroller");
-    protected Effect[] effects;
+    protected Effect[] builtinEffects;
+    protected Effect[] semitoneEffects;
     protected String description;
     protected String mode;
     
@@ -21,9 +22,9 @@ public class Whammy {
     }
 
 
-    public Effect[] getEffects() {
-        logger.warning("No effects in superclass");
-        return effects;
+    public Effect[] getBuiltinEffects() {
+        logger.warning("No builtinEffects in superclass");
+        return builtinEffects;
     }
 
 

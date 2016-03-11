@@ -29,7 +29,7 @@ public class WhammyBass2014 extends Whammy {
             new HarmonyEffect("OCT UP 10TH UP", 20, 20 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 2OCT UP", 21, 21 + BYPASS_OFFSET),
             new BypassEffect("Bypass")
-            };
+    };
     private static final Effect[] CHORDS_MODE_EFFECTS = {
             new WhammyEffect("2 OCT UP", 43, 43 + BYPASS_OFFSET),
             new WhammyEffect("OCT UP", 44, 44 + BYPASS_OFFSET),
@@ -53,8 +53,46 @@ public class WhammyBass2014 extends Whammy {
             new HarmonyEffect("OCT UP 10TH UP", 62, 62 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 2OCT UP", 63, 63 + BYPASS_OFFSET),
             new BypassEffect("Bypass")
-            };
-
+    };
+    private static final Effect[] CLASSIC_MODE_SEMITONE_EFFECTS = {
+            new SemitoneEffect("1 UP", 5, 5 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN / 2),
+            new SemitoneEffect("2 UP", 5, 5 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 3,
+            // TODO 4,
+            new SemitoneEffect("5 UP", 4, 4 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 6,
+            new SemitoneEffect("7 UP", 3, 3 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 8,
+            // TODO 9,
+            // TODO 10,
+            // TODO 11,
+            new WhammyEffect("12 UP", 2, 2 + BYPASS_OFFSET,
+                             Constants.PEDAL_POSITION_TOE_DOWN),  
+    };
+    private static final Effect[] CHORDS_MODE_SEMITONE_EFFECTS = {
+            new SemitoneEffect("1 UP", 47, 47 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN / 2),
+            new SemitoneEffect("2 UP", 47, 47 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 3,
+            // TODO 4,
+            new SemitoneEffect("5 UP", 46, 46 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 6,
+            new SemitoneEffect("7 UP", 45, 45 + BYPASS_OFFSET,
+                               Constants.PEDAL_POSITION_TOE_DOWN),
+            // TODO 8,
+            // TODO 9,
+            // TODO 10,
+            // TODO 11,
+            new WhammyEffect("12 UP", 44, 44 + BYPASS_OFFSET,
+                             Constants.PEDAL_POSITION_TOE_DOWN),  
+    };    
+    
 
     public WhammyBass2014() {
         super();
@@ -70,11 +108,13 @@ public class WhammyBass2014 extends Whammy {
         }
         else if (pMode.equals(Constants.WHAMMY_MODE_CHORDS)) {
             mode = pMode;
-            effects = CHORDS_MODE_EFFECTS;
+            builtinEffects = CHORDS_MODE_EFFECTS;
+            semitoneEffects = CHORDS_MODE_SEMITONE_EFFECTS;
         }
         else if (pMode.equals(Constants.WHAMMY_MODE_CLASSIC)) {
             mode = pMode;
-            effects = CLASSIC_MODE_EFFECTS;
+            builtinEffects = CLASSIC_MODE_EFFECTS;
+            semitoneEffects = CLASSIC_MODE_SEMITONE_EFFECTS;
         }
         else {
             throw new IllegalArgumentException(
@@ -93,7 +133,12 @@ public class WhammyBass2014 extends Whammy {
 
 
     @Override
-    public Effect[] getEffects() {
-        return effects;
+    public Effect[] getBuiltinEffects() {
+        return builtinEffects;
+    }
+    
+    
+    public Effect[] getSemitoneEffects() {
+        return semitoneEffects;
     }
 }

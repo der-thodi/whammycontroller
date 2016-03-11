@@ -123,7 +123,8 @@ public class SwingFrame extends JFrame {
         tabbedPane.setEnabledAt(1, false);
 
         JPanel playerPanel = new JPanel();
-        tabbedPane.addTab("New tab", null, playerPanel, null);
+        tabbedPane.addTab("Pattern player", null, playerPanel, null);
+        tabbedPane.setEnabledAt(2, false);
 
         JPanel runPanel = new JPanel();
         contentPane.add(runPanel, BorderLayout.SOUTH);
@@ -200,8 +201,8 @@ public class SwingFrame extends JFrame {
 
                 if (whammy != null && m != null) {
                     whammy.setMode(m);
-                    Effect[] effects = whammy.getEffects();
-                    logger.info("Available effects: " + effects.length);
+                    Effect[] effects = whammy.getBuiltinEffects();
+                    logger.info("Available builtinEffects: " + effects.length);
                     effectPanel.removeAll();
                     effectPanel.setLayout(new GridLayout((effects.length / 2) + 1, 2));
                     for (int i = 0; i < effects.length; i++) {
@@ -227,7 +228,7 @@ public class SwingFrame extends JFrame {
                     wc.setDelay((long)(60_000 / 
                                 Integer.parseInt(delayTextField.getText())));
                     
-                    Effect[] e = whammy.getEffects();
+                    Effect[] e = whammy.getBuiltinEffects();
                     for (int i = 0; i< e.length; i++) {
                         logger.info(e[i] + " " + e[i].isEnabled());
                     }
