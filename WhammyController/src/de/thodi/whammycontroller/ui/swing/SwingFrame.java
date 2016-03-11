@@ -210,7 +210,6 @@ public class SwingFrame extends JFrame {
         });
 
         typeComboBox.addItem(new WhammyBass2014());
-        //typeComboBox.addItem(new WhammyDT());
         typeComboBox.setSelectedIndex(0); // to fill mode combo box
     }
 

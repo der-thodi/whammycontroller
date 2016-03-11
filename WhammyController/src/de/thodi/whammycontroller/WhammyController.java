@@ -12,7 +12,8 @@ public class WhammyController implements Runnable {
     private WhammyMIDIDevice device;
     private Logger logger = Logger.getLogger("de.thodi.whammycontroller");
     private boolean stopThread = false;
-
+    private final int PEDAL_TOE_UP = 0;
+    private final int PEDAL_TOE_DOWN = 127;
 
     public WhammyController(Whammy pWhammy) {
         whammy = pWhammy;
@@ -25,13 +26,19 @@ public class WhammyController implements Runnable {
     }
 
 
-    public boolean setEffect(Effect pEffect) {
-        boolean result = false;
+    public void setEffect(Effect pEffect) {
+        setEffect(pEffect, PEDAL_TOE_UP - 1);
+    }
+    
+    
+    public void setEffect(Effect pEffect, int pPedalPosition) {
+        logger.info("Setting effect '" + pEffect + "', pedal at '" + 
+                    pPedalPosition + "'");
 
-        logger.info("Setting effect '" + pEffect + "'");
-        //device.sendProgramChangeMessage(pEffect.getActiveProgramChangeNumber());
-
-        return result;
+        device.sendProgramChangeMessage(pEffect.getActiveProgramChangeNumber());
+        if (pPedalPosition >= PEDAL_TOE_UP && pPedalPosition <= PEDAL_TOE_DOWN) {
+            device.sendContinuousControlMessage(pPedalPosition);
+        }
     }
 
 
@@ -53,20 +60,20 @@ public class WhammyController implements Runnable {
     }
 
 
-    public boolean setEffectWithDelay(Effect pEffect) {
-        boolean status;
-
-        status = setEffect(pEffect);
-        if (status == true) {
-            try {
-                Thread.sleep(delay);
-            } catch (Exception ex) {
-                status = false;
-            }
-        }
-
-        return status;
-    }
+//    public boolean setEffectWithDelay(Effect pEffect) {
+//        boolean status;
+//
+//        status = setEffect(pEffect);
+//        if (status == true) {
+//            try {
+//                Thread.sleep(delay);
+//            } catch (Exception ex) {
+//                status = false;
+//            }
+//        }
+//
+//        return status;
+//    }
 
 
     public void setMode(String pMode) {

@@ -14,6 +14,8 @@ public class WhammyMIDIDevice {
     private ShortMessage message;
     private static Logger logger = Logger
             .getLogger("de.thodi.whammycontroller");
+    
+    private final int WHAMMY_CC_CHANNEL = 11;
 
 
     public WhammyMIDIDevice(MidiDevice.Info pInfo) {
@@ -63,6 +65,16 @@ public class WhammyMIDIDevice {
     }
 
 
+    public void sendContinuousControlMessage(int pValue) {
+        try {
+            message.setMessage(ShortMessage.CONTROL_CHANGE, channel, WHAMMY_CC_CHANNEL, pValue);
+            receiver.send(message, 0);
+        } catch (Exception ex) {
+            logger.warning("Could not send cc '" + pValue + "': " + ex);
+        }        
+    }
+    
+    
     public boolean isSupported() {
         if (!isInitialized) {
             connect();
