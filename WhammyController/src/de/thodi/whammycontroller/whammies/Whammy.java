@@ -8,11 +8,8 @@ public class Whammy {
     protected Logger logger = Logger.getLogger("de.thodi.whammycontroller");
     protected Effect[] effects;
     protected String description;
-    public static String WHAMMY_DT = "WHAMMY DT";
-    public static String WHAMMY_MODE_CLASSIC = "CLASSIC";
-    public static String WHAMMY_MODE_CHORDS = "CHORDS";
     protected String mode;
-
+    
 
     public Whammy() {
     }
@@ -37,7 +34,6 @@ public class Whammy {
 
 
     public String[] getSupportedModes() {
-
         return new String[] {};
     }
 }

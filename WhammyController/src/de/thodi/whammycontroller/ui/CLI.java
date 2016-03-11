@@ -15,7 +15,7 @@ public class CLI {
 
     public static void main(String[] args) {
         Whammy w = new WhammyBass2014();
-        w.setMode(Whammy.WHAMMY_MODE_CLASSIC);
+        w.setMode(Constants.WHAMMY_MODE_CLASSIC);
         WhammyController c = new WhammyController(w);
         Effect[] e = w.getEffects();
 
@@ -26,10 +26,6 @@ public class CLI {
             c.setChannel(1);
             c.setDelay(1000);
             c.run();
-//            Random r = new Random();
-//            for (int i = 0; i < 10; i++) {
-//                c.setEffectWithDelay(e[r.nextInt(e.length)]);
-//            }
         }
         else {
             logger.severe("no supported devices");

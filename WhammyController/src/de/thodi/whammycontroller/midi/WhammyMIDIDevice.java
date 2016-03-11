@@ -1,8 +1,9 @@
 package de.thodi.whammycontroller.midi;
 
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import javax.sound.midi.*;
+import de.thodi.whammycontroller.*;
 
 public class WhammyMIDIDevice {
 
@@ -14,17 +15,16 @@ public class WhammyMIDIDevice {
     private ShortMessage message;
     private static Logger logger = Logger
             .getLogger("de.thodi.whammycontroller");
+
     
-    private final int WHAMMY_CC_CHANNEL = 11;
-
-
     public WhammyMIDIDevice(MidiDevice.Info pInfo) {
         info = pInfo;
     }
 
 
     public void setChannel(int pChannel) {
-        if (pChannel < 1 || pChannel > 16) {
+        if (pChannel < Constants.MIDI_CHANNEL_MIN ||
+            pChannel > Constants.MIDI_CHANNEL_MAX) {
             throw new IllegalArgumentException("MIDI channel not in range");
         }
         channel = pChannel;
@@ -67,7 +67,8 @@ public class WhammyMIDIDevice {
 
     public void sendContinuousControlMessage(int pValue) {
         try {
-            message.setMessage(ShortMessage.CONTROL_CHANGE, channel, WHAMMY_CC_CHANNEL, pValue);
+            message.setMessage(ShortMessage.CONTROL_CHANGE, channel,
+                               Constants.MIDI_CC_COMMAND, pValue);
             receiver.send(message, 0);
         } catch (Exception ex) {
             logger.warning("Could not send cc '" + pValue + "': " + ex);

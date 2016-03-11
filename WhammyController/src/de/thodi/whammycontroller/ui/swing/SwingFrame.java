@@ -19,7 +19,7 @@ public class SwingFrame extends JFrame {
     private JPanel contentPane;
     private static Logger logger = Logger
             .getLogger("de.thodi.whammycontroller");
-    private JTextField delayTextField;
+    private JTextField bpmTextField;
 
 
     /**
@@ -72,7 +72,7 @@ public class SwingFrame extends JFrame {
         JComboBox<WhammyMIDIDevice> receiverComboBox = new JComboBox<WhammyMIDIDevice>();
         receiverComboBox.setMaximumRowCount(16);
         receiverPanel.add(receiverComboBox, BorderLayout.CENTER);
-        initializeReceiverComboBox(receiverComboBox);
+
 
         JPanel channelPanel = new JPanel();
         midiPanel.add(channelPanel);
@@ -109,42 +109,48 @@ public class SwingFrame extends JFrame {
 
         JComboBox<String> whammyModeComboBox = new JComboBox<String>();
         whammyModePanel.add(whammyModeComboBox, BorderLayout.CENTER);
-        
+
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-        
-                JPanel effectPanel = new JPanel();
-                tabbedPane.addTab("Effects", null, effectPanel, null);
-                tabbedPane.setEnabledAt(0, true);
-                initializeWhammyTypeComboBox(whammyTypeComboBox,
-                                             whammyModeComboBox,
-                                             effectPanel);
-                
-                JPanel semitonePanel = new JPanel();
-                tabbedPane.addTab("Semitones", null, semitonePanel, null);
-                tabbedPane.setEnabledAt(1, false);
-        
+
+        JPanel effectPanel = new JPanel();
+        tabbedPane.addTab("Effects", null, effectPanel, null);
+        tabbedPane.setEnabledAt(0, true);
+
+
+        JPanel semitonePanel = new JPanel();
+        tabbedPane.addTab("Semitones", null, semitonePanel, null);
+        tabbedPane.setEnabledAt(1, false);
+
+        JPanel playerPanel = new JPanel();
+        tabbedPane.addTab("New tab", null, playerPanel, null);
+
         JPanel runPanel = new JPanel();
         contentPane.add(runPanel, BorderLayout.SOUTH);
         runPanel.setLayout(new GridLayout(0, 2, 0, 0));
-        
+
         JPanel delayPanel = new JPanel();
         runPanel.add(delayPanel);
         delayPanel.setLayout(new BorderLayout(0, 0));
-        
-        delayTextField = new JTextField();
-        delayTextField.setHorizontalAlignment(SwingConstants.TRAILING);
-        delayPanel.add(delayTextField, BorderLayout.CENTER);
-        delayTextField.setText("1000");
-        delayTextField.setColumns(10);
-        
-        JLabel lblNewLabel_3 = new JLabel("Delay (ms)");
+
+        bpmTextField = new JTextField();
+        bpmTextField.setHorizontalAlignment(SwingConstants.TRAILING);
+        delayPanel.add(bpmTextField, BorderLayout.CENTER);
+        bpmTextField.setText("60");
+        bpmTextField.setColumns(10);
+
+        JLabel lblNewLabel_3 = new JLabel(" BPM ");
         delayPanel.add(lblNewLabel_3, BorderLayout.WEST);
-        
+
         JButton runButton = new JButton("Run");
         runPanel.add(runButton);
+
         initializeChannelComboBox(channelComboBox);
-        initializeRunButton(runButton, delayTextField);
+        initializeRunButton(runButton, bpmTextField);
+        initializeReceiverComboBox(receiverComboBox);
+        initializeWhammyTypeComboBox(whammyTypeComboBox,
+                whammyModeComboBox,
+                effectPanel);
     }
 
 
@@ -208,11 +214,6 @@ public class SwingFrame extends JFrame {
         typeComboBox.addItem(new WhammyBass2014());
         typeComboBox.setSelectedIndex(0); // to fill mode combo box
     }
-
-
-    private static void initializeConnectButton(final JButton button,
-            final JLabel label) {
-    }
     
     
     private static void initializeRunButton(final JButton runButton,
@@ -223,7 +224,9 @@ public class SwingFrame extends JFrame {
                 if (!running) {
                     runButton.setText("Stop");
                     wc = new WhammyController(whammy);
-                    wc.setDelay(Integer.parseInt(delayTextField.getText()));
+                    wc.setDelay((long)(60_000 / 
+                                Integer.parseInt(delayTextField.getText())));
+                    
                     Effect[] e = whammy.getEffects();
                     for (int i = 0; i< e.length; i++) {
                         logger.info(e[i] + " " + e[i].isEnabled());

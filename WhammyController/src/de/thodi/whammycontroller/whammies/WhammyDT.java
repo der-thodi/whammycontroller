@@ -1,5 +1,6 @@
 package de.thodi.whammycontroller.whammies;
 
+import de.thodi.whammycontroller.*;
 import de.thodi.whammycontroller.effects.*;
 
 public class WhammyDT extends Whammy {
@@ -35,7 +36,7 @@ public class WhammyDT extends Whammy {
             logger.warning("null mode");
             return false;
         }
-        else if (pMode.equals(WHAMMY_DT)) {
+        else if (pMode.equals(Constants.WHAMMY_DT)) {
             mode = pMode;
         }
         else {
@@ -49,7 +50,7 @@ public class WhammyDT extends Whammy {
 
     @Override
     public String[] getSupportedModes() {
-        return new String[] { WHAMMY_DT };
+        return new String[] { Constants.WHAMMY_DT };
     }
 
 

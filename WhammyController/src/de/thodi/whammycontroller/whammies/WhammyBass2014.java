@@ -1,6 +1,7 @@
 package de.thodi.whammycontroller.whammies;
 
 import de.thodi.whammycontroller.effects.*;
+import de.thodi.whammycontroller.*;
 
 public class WhammyBass2014 extends Whammy {
     private static final int BYPASS_OFFSET = 21;
@@ -67,11 +68,11 @@ public class WhammyBass2014 extends Whammy {
             logger.warning("null mode");
             return false;
         }
-        else if (pMode.equals(WHAMMY_MODE_CHORDS)) {
+        else if (pMode.equals(Constants.WHAMMY_MODE_CHORDS)) {
             mode = pMode;
             effects = CHORDS_MODE_EFFECTS;
         }
-        else if (pMode.equals(WHAMMY_MODE_CLASSIC)) {
+        else if (pMode.equals(Constants.WHAMMY_MODE_CLASSIC)) {
             mode = pMode;
             effects = CLASSIC_MODE_EFFECTS;
         }
@@ -86,7 +87,8 @@ public class WhammyBass2014 extends Whammy {
 
     @Override
     public String[] getSupportedModes() {
-        return new String[] { WHAMMY_MODE_CHORDS, WHAMMY_MODE_CLASSIC };
+        return new String[] { Constants.WHAMMY_MODE_CHORDS, 
+                              Constants.WHAMMY_MODE_CLASSIC };
     }
 
 

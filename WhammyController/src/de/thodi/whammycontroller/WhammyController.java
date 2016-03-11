@@ -13,9 +13,7 @@ public class WhammyController implements Runnable {
     private Logger logger = Logger.getLogger("de.thodi.whammycontroller");
     private boolean stopThread = false;
     private Effect currentEffect;
-    
-    private final int PEDAL_TOE_UP = 0;
-    private final int PEDAL_TOE_DOWN = 127;
+
 
     public WhammyController(Whammy pWhammy) {
         whammy = pWhammy;
@@ -29,7 +27,7 @@ public class WhammyController implements Runnable {
 
 
     public void setEffect(Effect pEffect) {
-        setEffect(pEffect, PEDAL_TOE_UP - 1);
+        setEffect(pEffect, Constants.IGNORE_PEDAL_POSITION);
     }
     
     
@@ -52,7 +50,8 @@ public class WhammyController implements Runnable {
             currentEffect = pEffect;
         }
         //device.sendProgramChangeMessage(changeNumber);
-        if (pPedalPosition >= PEDAL_TOE_UP && pPedalPosition <= PEDAL_TOE_DOWN) {
+        if (pPedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
+            pPedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
             //device.sendContinuousControlMessage(pPedalPosition);
         }
     }
@@ -72,6 +71,7 @@ public class WhammyController implements Runnable {
         if (pDelay <= 0) {
             throw new IllegalArgumentException("Delay must be > 0");
         }
+        logger.info("Delay: " + pDelay);
         delay = pDelay;
     }
 
