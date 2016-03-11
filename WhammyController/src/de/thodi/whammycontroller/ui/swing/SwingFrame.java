@@ -60,7 +60,7 @@ public class SwingFrame extends JFrame {
         parameterPanel.add(midiPanel);
         midiPanel.setBorder(new TitledBorder(null, "MIDI", TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
-        midiPanel.setLayout(new GridLayout(3, 1, 0, 0));
+        midiPanel.setLayout(new GridLayout(2, 1, 0, 0));
 
         JPanel receiverPanel = new JPanel();
         midiPanel.add(receiverPanel);
@@ -83,16 +83,6 @@ public class SwingFrame extends JFrame {
 
         JComboBox<Integer> channelComboBox = new JComboBox<Integer>();
         channelPanel.add(channelComboBox, BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel();
-        midiPanel.add(buttonPanel);
-        buttonPanel.setLayout(new BorderLayout(0, 0));
-
-        JButton connectButton = new JButton("Connect");
-        buttonPanel.add(connectButton, BorderLayout.CENTER);
-
-        JLabel connectedLabel = new JLabel("Not connected");
-        buttonPanel.add(connectedLabel, BorderLayout.EAST);
 
         JPanel whammyPanel = new JPanel();
         parameterPanel.add(whammyPanel);
@@ -119,9 +109,20 @@ public class SwingFrame extends JFrame {
 
         JComboBox<String> whammyModeComboBox = new JComboBox<String>();
         whammyModePanel.add(whammyModeComboBox, BorderLayout.CENTER);
-
-        JPanel effectPanel = new JPanel();
-        contentPane.add(effectPanel, BorderLayout.CENTER);
+        
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        contentPane.add(tabbedPane, BorderLayout.CENTER);
+        
+                JPanel effectPanel = new JPanel();
+                tabbedPane.addTab("Effects", null, effectPanel, null);
+                tabbedPane.setEnabledAt(0, true);
+                initializeWhammyTypeComboBox(whammyTypeComboBox,
+                                             whammyModeComboBox,
+                                             effectPanel);
+                
+                JPanel semitonePanel = new JPanel();
+                tabbedPane.addTab("Semitones", null, semitonePanel, null);
+                tabbedPane.setEnabledAt(1, false);
         
         JPanel runPanel = new JPanel();
         contentPane.add(runPanel, BorderLayout.SOUTH);
@@ -142,12 +143,7 @@ public class SwingFrame extends JFrame {
         
         JButton runButton = new JButton("Run");
         runPanel.add(runButton);
-        
-        initializeConnectButton(connectButton, connectedLabel);
         initializeChannelComboBox(channelComboBox);
-        initializeWhammyTypeComboBox(whammyTypeComboBox,
-                                     whammyModeComboBox,
-                                     effectPanel);
         initializeRunButton(runButton, delayTextField);
     }
 
@@ -216,21 +212,6 @@ public class SwingFrame extends JFrame {
 
     private static void initializeConnectButton(final JButton button,
             final JLabel label) {
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (!connected) {
-                    label.setText("Connected");
-                    button.setText("Disconnect");
-                    connected = true;
-                }
-                else {
-                    label.setText("Not connected");
-                    button.setText("Connect");
-                    connected = false;
-                }
-            }
-        });
     }
     
     

@@ -12,6 +12,8 @@ public class WhammyController implements Runnable {
     private WhammyMIDIDevice device;
     private Logger logger = Logger.getLogger("de.thodi.whammycontroller");
     private boolean stopThread = false;
+    private Effect currentEffect;
+    
     private final int PEDAL_TOE_UP = 0;
     private final int PEDAL_TOE_DOWN = 127;
 
@@ -32,12 +34,26 @@ public class WhammyController implements Runnable {
     
     
     public void setEffect(Effect pEffect, int pPedalPosition) {
+        int changeNumber;
+        
         logger.info("Setting effect '" + pEffect + "', pedal at '" + 
                     pPedalPosition + "'");
-
-        device.sendProgramChangeMessage(pEffect.getActiveProgramChangeNumber());
+        if (pEffect instanceof BypassEffect)  {
+            if (currentEffect == null) {
+                // First ever effect is bypass -> do nothing
+                return;
+            }
+            else {
+                changeNumber = currentEffect.getBypassProgramChangeNumber();                
+            }
+        }
+        else {
+            changeNumber = pEffect.getActiveProgramChangeNumber();
+            currentEffect = pEffect;
+        }
+        //device.sendProgramChangeMessage(changeNumber);
         if (pPedalPosition >= PEDAL_TOE_UP && pPedalPosition <= PEDAL_TOE_DOWN) {
-            device.sendContinuousControlMessage(pPedalPosition);
+            //device.sendContinuousControlMessage(pPedalPosition);
         }
     }
 
@@ -60,22 +76,6 @@ public class WhammyController implements Runnable {
     }
 
 
-//    public boolean setEffectWithDelay(Effect pEffect) {
-//        boolean status;
-//
-//        status = setEffect(pEffect);
-//        if (status == true) {
-//            try {
-//                Thread.sleep(delay);
-//            } catch (Exception ex) {
-//                status = false;
-//            }
-//        }
-//
-//        return status;
-//    }
-
-
     public void setMode(String pMode) {
         whammy.setMode(pMode);
     }
@@ -85,6 +85,7 @@ public class WhammyController implements Runnable {
         stopThread = true;
     }
 
+    
     @Override
     public void run() {
         try {

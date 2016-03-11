@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import de.thodi.whammycontroller.effects.*;
 
+@SuppressWarnings("serial")
 public class EffectPanel extends JPanel implements ChangeListener {
 
     private JCheckBox checkBox;
@@ -16,8 +17,9 @@ public class EffectPanel extends JPanel implements ChangeListener {
         
         setLayout(new BorderLayout());
         checkBox = new JCheckBox();
-        checkBox.setSelected(effect instanceof WhammyEffect);
-        effect.setEnabled(effect instanceof WhammyEffect);
+        effect.setEnabled(effect instanceof WhammyEffect ||
+                          effect instanceof BypassEffect);
+        checkBox.setSelected(effect.isEnabled());
         checkBox.setEnabled(true);
         checkBox.addChangeListener(this);
         add(checkBox, BorderLayout.WEST);

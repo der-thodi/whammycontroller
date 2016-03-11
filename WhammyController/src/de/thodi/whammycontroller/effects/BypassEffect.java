@@ -6,6 +6,10 @@ public class BypassEffect extends Effect {
         super(pDescription, pActive, pBypass);
     }
 
+    public BypassEffect(String pDescription) {
+        super(pDescription, 0, 0);
+    }
+    
     @Override
     public String toString() {
         return "BYPASS";

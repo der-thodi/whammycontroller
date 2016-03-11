@@ -27,7 +27,7 @@ public class WhammyBass2014 extends Whammy {
             new HarmonyEffect("OCT DOWN OCT UP", 19, 19 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 10TH UP", 20, 20 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 2OCT UP", 21, 21 + BYPASS_OFFSET),
-            
+            new BypassEffect("Bypass")
             };
     private static final Effect[] CHORDS_MODE_EFFECTS = {
             new WhammyEffect("2 OCT UP", 43, 43 + BYPASS_OFFSET),
@@ -51,6 +51,7 @@ public class WhammyBass2014 extends Whammy {
             new HarmonyEffect("OCT DOWN OCT UP", 61, 61 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 10TH UP", 62, 62 + BYPASS_OFFSET),
             new HarmonyEffect("OCT UP 2OCT UP", 63, 63 + BYPASS_OFFSET),
+            new BypassEffect("Bypass")
             };
 
 
