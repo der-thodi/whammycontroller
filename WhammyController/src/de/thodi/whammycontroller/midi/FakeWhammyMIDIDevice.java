@@ -1,6 +1,7 @@
 package de.thodi.whammycontroller.midi;
 
 import java.util.logging.Logger;
+import de.thodi.whammycontroller.Constants;
 
 public class FakeWhammyMIDIDevice implements WhammyMIDIDevice {
 
@@ -31,16 +32,28 @@ public class FakeWhammyMIDIDevice implements WhammyMIDIDevice {
 
 
     @Override
-    public void sendProgramChangeMessage(int pValue) {
-        logger.info("sendProgramChangeMessage(" + pValue + ")");
+    public void sendProgramChangeMessage(int pData1) {
+        sendProgramChangeMessage(pData1, 0);
     }
 
+    
+    @Override
+    public void sendProgramChangeMessage(int pData1, int pData2) {
+        logger.info("sendProgramChangeMessage(" + pData1 + ", " + pData2 + ")");
+    }
+    
 
     @Override
     public void sendContinuousControlMessage(int pValue) {
-        logger.info("sendContinuousControlMessage(" + pValue + ")");
+        sendContinuousControlMessage(Constants.MIDI_CC_COMMAND, pValue);
     }
 
+    
+    @Override
+    public void sendContinuousControlMessage(int pCC, int pValue) {
+        logger.info("sendContinuousControlMessage(" + pCC + ", " +
+                    pValue + ")");        
+    }
 
     @Override
     public boolean isSupported() {

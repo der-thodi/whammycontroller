@@ -15,5 +15,6 @@ public class Constants {
     public final static int MIDI_PC_MAX = 128;
     public final static long MIN_BPM = 1;
     public final static long MAX_BPM = 60_000;
+    public final static int MIDI_TIMESTAMP_NOW = -1;
    
 }

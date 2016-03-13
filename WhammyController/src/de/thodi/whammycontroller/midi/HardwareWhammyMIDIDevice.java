@@ -58,26 +58,39 @@ public class HardwareWhammyMIDIDevice implements WhammyMIDIDevice {
 
 
     @Override
-    public void sendProgramChangeMessage(int pValue) {
-        try {
-            message.setMessage(ShortMessage.PROGRAM_CHANGE, channel, pValue, 0);
-            receiver.send(message, 0);
-        } catch (Exception ex) {
-            logger.warning("Could not send pc '" + pValue + "': " + ex);
-        }
+    public void sendProgramChangeMessage(int pData1) {
+        sendProgramChangeMessage(pData1, 0);
     }
 
 
     @Override
-    public void sendContinuousControlMessage(int pValue) {
+    public void sendProgramChangeMessage(int pData1, int pData2) {
         try {
-            message.setMessage(ShortMessage.CONTROL_CHANGE, channel,
-                               Constants.MIDI_CC_COMMAND, pValue);
-            receiver.send(message, 0);
+            message.setMessage(ShortMessage.PROGRAM_CHANGE, channel, pData1,
+                               pData2);
+            receiver.send(message, Constants.MIDI_TIMESTAMP_NOW);
+        } catch (Exception ex) {
+            logger.warning("Could not send pc '" + pData1 + "': " + ex);
+        }
+    }
+    
+    
+    @Override
+    public void sendContinuousControlMessage(int pValue) {
+        sendContinuousControlMessage(Constants.MIDI_CC_COMMAND, pValue);
+    }
+    
+    
+    @Override
+    public void sendContinuousControlMessage(int pCC, int pValue) {
+        try {
+            message.setMessage(ShortMessage.CONTROL_CHANGE, channel, pCC,
+                               pValue);
+            receiver.send(message, Constants.MIDI_TIMESTAMP_NOW);
         } catch (Exception ex) {
             logger.warning("Could not send cc '" + pValue + "': " + ex);
-        }        
-    }
+        }  
+    }  
     
     
     @Override
@@ -96,6 +109,9 @@ public class HardwareWhammyMIDIDevice implements WhammyMIDIDevice {
         return info.getVendor() + " " + info.getName() + " ("
                 + info.getDescription() + ")";
     }
+
+
+ 
 
 
 

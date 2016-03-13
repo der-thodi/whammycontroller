@@ -2,10 +2,9 @@ package de.thodi.whammycontroller.ui.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.logging.Logger;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import java.util.logging.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
 import de.thodi.whammycontroller.*;
 import de.thodi.whammycontroller.midi.*;
 import de.thodi.whammycontroller.whammies.*;
@@ -13,15 +12,22 @@ import de.thodi.whammycontroller.effects.*;
 import javax.swing.*;
 
 
+@SuppressWarnings("serial")
 public class SwingFrame extends JFrame {
 
     private static WhammyController wc;
+    private static WhammyMIDIDevice midiDevice;
+    private static int channel;
     private static boolean running = false;
     private static Whammy whammy; 
     private JPanel contentPane;
     private static Logger logger = Logger
             .getLogger("de.thodi.whammycontroller");
     private JTextField bpmTextField;
+    private JTextField pcNumberTextField;
+    private JTextField pcValueTextField;
+    private JTextField ccTextField;
+    private JTextField ccValueField;
 
 
     /**
@@ -126,10 +132,11 @@ public class SwingFrame extends JFrame {
                         effectPanel);
                 
                 JPanel effectOptionPanel = new JPanel();
+                effectOptionPanel.setBorder(new TitledBorder(null, "Options", TitledBorder.LEADING, TitledBorder.TOP, null, null));
                 effectTab.add(effectOptionPanel, BorderLayout.SOUTH);
                 effectOptionPanel.setLayout(new GridLayout(0, 1, 0, 0));
                 
-                JCheckBox pedalPositionOptionCheckBox = new JCheckBox("Pedal: Explicitly set toe down position");
+                JCheckBox pedalPositionOptionCheckBox = new JCheckBox("Pedal: Explicitly set toe down position at beginning");
                 effectOptionPanel.add(pedalPositionOptionCheckBox);
 
 
@@ -139,7 +146,25 @@ public class SwingFrame extends JFrame {
 
         JPanel playerTab = new JPanel();
         tabbedPane.addTab("Pattern player", null, playerTab, null);
-        tabbedPane.setEnabledAt(2, false);
+        tabbedPane.setEnabledAt(2, true);
+        playerTab.setLayout(new BorderLayout(0, 0));
+        
+        JPanel playerButtonPanel = new JPanel();
+        playerTab.add(playerButtonPanel, BorderLayout.NORTH);
+        playerButtonPanel.setLayout(new GridLayout(0, 4, 0, 0));
+        
+        JButton btnNewButton = new JButton("Load...");
+        playerButtonPanel.add(btnNewButton);
+        
+        JButton btnNewButton_1 = new JButton("Save...");
+        playerButtonPanel.add(btnNewButton_1);
+        
+        JTextArea patternTextArea = new JTextArea();
+        patternTextArea.setLineWrap(true);
+        //playerTab.add(patternTextArea, BorderLayout.SOUTH);
+        
+        JScrollPane scrollPane = new JScrollPane(patternTextArea);
+        playerTab.add(scrollPane, BorderLayout.CENTER);
 
         JPanel runPanel = new JPanel();
         contentPane.add(runPanel, BorderLayout.SOUTH);
@@ -168,7 +193,72 @@ public class SwingFrame extends JFrame {
         
         JPanel midiTestTab = new JPanel();
         tabbedPane.addTab("MDI Test", null, midiTestTab, null);
-        tabbedPane.setEnabledAt(3, false);
+        tabbedPane.setEnabledAt(3, true);
+        midiTestTab.setLayout(new GridLayout(3, 0, 0, 0));
+        
+        JPanel midiTestConnectPanel = new JPanel();
+        midiTestTab.add(midiTestConnectPanel);
+        
+        JButton midiTestConnectButton = new JButton("Connect to MIDI device");
+        midiTestConnectPanel.add(midiTestConnectButton);
+        initializeMidiTestConnectButton(midiTestConnectButton, receiverComboBox,
+                                        channelComboBox);
+        
+        JPanel midiTestPCPanel = new JPanel();
+        midiTestPCPanel.setBorder(new TitledBorder(null, "MIDI program change", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        midiTestTab.add(midiTestPCPanel);
+        midiTestPCPanel.setLayout(new GridLayout(2, 3, 0, 0));
+        
+        JLabel lblNewLabel_4 = new JLabel("Program Change #");
+        midiTestPCPanel.add(lblNewLabel_4);
+        
+        pcNumberTextField = new JTextField();
+        pcNumberTextField.setHorizontalAlignment(SwingConstants.TRAILING);
+        pcNumberTextField.setText("1");
+        midiTestPCPanel.add(pcNumberTextField);
+        pcNumberTextField.setColumns(10);
+        
+        JButton pcSendButton = new JButton("Send");
+        midiTestPCPanel.add(pcSendButton);
+
+        JLabel pcValueLabel = new JLabel("Value");
+        midiTestPCPanel.add(pcValueLabel);
+        
+        pcValueTextField = new JTextField();
+        pcValueTextField.setText("0");
+        pcValueTextField.setHorizontalAlignment(SwingConstants.TRAILING);
+        midiTestPCPanel.add(pcValueTextField);
+        pcValueTextField.setColumns(10);
+  
+        initializePCSendButton(pcSendButton, pcNumberTextField, pcValueTextField);
+        
+        JPanel midiTestCCPanel = new JPanel();
+        midiTestCCPanel.setBorder(new TitledBorder(null, "MIDI continuous control", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        midiTestTab.add(midiTestCCPanel);
+        midiTestCCPanel.setLayout(new GridLayout(2, 3, 0, 0));
+        
+        JLabel lblNewLabel_5 = new JLabel("CC #");
+        midiTestCCPanel.add(lblNewLabel_5);
+        
+        ccTextField = new JTextField();
+        ccTextField.setHorizontalAlignment(SwingConstants.TRAILING);
+        ccTextField.setText("11");
+        midiTestCCPanel.add(ccTextField);
+        ccTextField.setColumns(10);
+        
+        JButton ccSendButton = new JButton("Send");
+        midiTestCCPanel.add(ccSendButton);
+        
+        JLabel lblNewLabel_6 = new JLabel("Value");
+        midiTestCCPanel.add(lblNewLabel_6);
+        
+        ccValueField = new JTextField();
+        ccValueField.setText("0");
+        ccValueField.setHorizontalAlignment(SwingConstants.TRAILING);
+        midiTestCCPanel.add(ccValueField);
+        ccValueField.setColumns(10);
+        
+        initializePCSendButton(ccSendButton, ccTextField, ccValueField);
     }
 
 
@@ -244,8 +334,8 @@ public class SwingFrame extends JFrame {
             public void actionPerformed(ActionEvent arg0) {
                 if (!running) {
 
-                    int channel = (Integer)channelComboBox.getSelectedItem();
-                    WhammyMIDIDevice midiDevice =
+                    channel = (Integer)channelComboBox.getSelectedItem();
+                    midiDevice =
                             (WhammyMIDIDevice)receiverComboBox.getSelectedItem();
                     long delay = (long)(60_000 / 
                             Long.parseLong(bpmTextField.getText()));                    
@@ -309,6 +399,50 @@ public class SwingFrame extends JFrame {
                     runButton.setText("Run");
                     running = false;
                 }
+            }
+        });
+    }
+    
+    
+    private static void initializeMidiTestConnectButton(final JButton midiTestConnectButton,
+            final JComboBox<WhammyMIDIDevice> receiverComboBox,
+            final JComboBox<Integer> channelComboBox) {
+        channel = (Integer)channelComboBox.getSelectedItem();
+        midiDevice =
+                (WhammyMIDIDevice)receiverComboBox.getSelectedItem();                  
+        
+        if (midiDevice == null) {
+            logger.severe("No device");
+            return;
+        }
+        
+        midiDevice.setChannel(channel);
+    }
+    
+    
+    private static void initializePCSendButton(final JButton pcSendButton,
+            final JTextField pcNumberTextField,
+            final JTextField pcValueTextField) {
+        pcSendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                int pPC = Integer.parseInt(pcNumberTextField.getText());
+                int pValue = Integer.parseInt(pcValueTextField.getText());
+                
+                midiDevice.sendProgramChangeMessage(pPC, pValue);
+            }
+        });
+    }
+    
+    
+    private static void initializeCCSendButton(final JButton ccSendButton,
+            final JTextField ccNumberTextField,
+            final JTextField ccValueTextField) {
+        ccSendButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                int pPC = Integer.parseInt(ccNumberTextField.getText());
+                int pValue = Integer.parseInt(ccValueTextField.getText());
+                
+                midiDevice.sendContinuousControlMessage(pPC, pValue);
             }
         });
     }

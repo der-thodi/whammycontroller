@@ -39,8 +39,11 @@ public class WhammyController implements Runnable {
         logger.info("Setting effect '" + pEffect + "'");
         if (pEffect instanceof BypassEffect)  {
             if (currentEffect == null) {
-                // First ever effect is bypass -> do nothing
-                return;
+                // TODO
+                // First ever effect is bypass -> send no change command
+                // this is wrong, of course, since an effect could curently
+                // be selected
+                changeNumber = Constants.MIDI_PC_MIN - 1;
             }
             else {
                 changeNumber = currentEffect.getBypassProgramChangeNumber();                
@@ -51,7 +54,10 @@ public class WhammyController implements Runnable {
             currentEffect = pEffect;
         }
         
-        device.sendProgramChangeMessage(changeNumber);
+        if (changeNumber >= Constants.MIDI_PC_MIN && 
+            changeNumber <= Constants.MIDI_PC_MAX) {
+            device.sendProgramChangeMessage(changeNumber);
+        }
         
         if (pedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
             pedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
