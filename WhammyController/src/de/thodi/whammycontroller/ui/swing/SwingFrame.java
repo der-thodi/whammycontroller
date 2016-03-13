@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.logging.Logger;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import de.thodi.whammycontroller.*;
 import de.thodi.whammycontroller.midi.*;
 import de.thodi.whammycontroller.whammies.*;
@@ -14,7 +16,7 @@ import javax.swing.*;
 public class SwingFrame extends JFrame {
 
     private static WhammyController wc;
-    private static boolean connected = false, running = false;
+    private static boolean running = false;
     private static Whammy whammy; 
     private JPanel contentPane;
     private static Logger logger = Logger
@@ -112,18 +114,31 @@ public class SwingFrame extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
+        
+        JPanel effectTab = new JPanel();
+        tabbedPane.addTab("Effects", null, effectTab, null);
+                effectTab.setLayout(new BorderLayout(0, 0));
+        
+                JPanel effectPanel = new JPanel();
+                effectTab.add(effectPanel);
+                initializeWhammyTypeComboBox(whammyTypeComboBox,
+                        whammyModeComboBox,
+                        effectPanel);
+                
+                JPanel effectOptionPanel = new JPanel();
+                effectTab.add(effectOptionPanel, BorderLayout.SOUTH);
+                effectOptionPanel.setLayout(new GridLayout(0, 1, 0, 0));
+                
+                JCheckBox pedalPositionOptionCheckBox = new JCheckBox("Pedal: Explicitly set toe down position");
+                effectOptionPanel.add(pedalPositionOptionCheckBox);
 
-        JPanel effectPanel = new JPanel();
-        tabbedPane.addTab("Effects", null, effectPanel, null);
-        tabbedPane.setEnabledAt(0, true);
 
-
-        JPanel semitonePanel = new JPanel();
-        tabbedPane.addTab("Semitones", null, semitonePanel, null);
+        JPanel semitoneTab = new JPanel();
+        tabbedPane.addTab("Semitones", null, semitoneTab, null);
         tabbedPane.setEnabledAt(1, false);
 
-        JPanel playerPanel = new JPanel();
-        tabbedPane.addTab("Pattern player", null, playerPanel, null);
+        JPanel playerTab = new JPanel();
+        tabbedPane.addTab("Pattern player", null, playerTab, null);
         tabbedPane.setEnabledAt(2, false);
 
         JPanel runPanel = new JPanel();
@@ -147,17 +162,19 @@ public class SwingFrame extends JFrame {
         runPanel.add(runButton);
 
         initializeChannelComboBox(channelComboBox);
-        initializeRunButton(runButton, bpmTextField);
+        initializeRunButton(runButton, bpmTextField, receiverComboBox,
+                            channelComboBox, pedalPositionOptionCheckBox);
         initializeReceiverComboBox(receiverComboBox);
-        initializeWhammyTypeComboBox(whammyTypeComboBox,
-                whammyModeComboBox,
-                effectPanel);
+        
+        JPanel midiTestTab = new JPanel();
+        tabbedPane.addTab("MDI Test", null, midiTestTab, null);
+        tabbedPane.setEnabledAt(3, false);
     }
 
 
     private static void initializeReceiverComboBox(
             JComboBox<WhammyMIDIDevice> receiverComboBox) {
-        WhammyMIDIDevice[] devices = WhammyMIDIDevice.getSupportedDevices();
+        WhammyMIDIDevice[] devices = WhammyMIDIHelper.getSupportedDevices();
 
         for (int i = 0; i < devices.length; i++) {
             receiverComboBox.addItem(devices[i]);
@@ -218,22 +235,65 @@ public class SwingFrame extends JFrame {
     
     
     private static void initializeRunButton(final JButton runButton,
-            final JTextField delayTextField) {
+            final JTextField bpmTextField,
+            final JComboBox<WhammyMIDIDevice> receiverComboBox,
+            final JComboBox<Integer> channelComboBox,
+            final JCheckBox pedalPositionOptionCheckBox) {
         runButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 if (!running) {
-                    runButton.setText("Stop");
-                    wc = new WhammyController(whammy);
-                    wc.setDelay((long)(60_000 / 
-                                Integer.parseInt(delayTextField.getText())));
+
+                    int channel = (Integer)channelComboBox.getSelectedItem();
+                    WhammyMIDIDevice midiDevice =
+                            (WhammyMIDIDevice)receiverComboBox.getSelectedItem();
+                    long delay = (long)(60_000 / 
+                            Long.parseLong(bpmTextField.getText()));                    
                     
-                    Effect[] e = whammy.getBuiltinEffects();
-                    for (int i = 0; i< e.length; i++) {
-                        logger.info(e[i] + " " + e[i].isEnabled());
+                    if (midiDevice == null) {
+                        logger.severe("No device");
+                        return;
                     }
-                    delayTextField.setEditable(false);
                     
+                    wc = new WhammyController(whammy);
+                    wc.setMIDIDevice(midiDevice);
+                    wc.setChannel(channel);
+                    wc.setDelay(delay);
+                    
+                    Effect[] effect = whammy.getBuiltinEffects();
+                    for (int i = 0; i< effect.length; i++) {
+                        logger.info(effect[i] + " " + effect[i].isEnabled());
+                    }
+                    
+                    bpmTextField.getDocument().addDocumentListener(new DocumentListener() {
+                        public void changedUpdate(DocumentEvent e) {
+                            updateBPM();
+                          }
+                          public void removeUpdate(DocumentEvent e) {
+                            updateBPM();
+                          }
+                          public void insertUpdate(DocumentEvent e) {
+                            updateBPM();
+                          }
+
+                          public void updateBPM() {
+                              String bpmString = bpmTextField.getText();
+                              
+                              if (!bpmString.trim().isEmpty()) {
+                                  long bpm = Long.parseLong(bpmString);
+                                  if (bpm >= Constants.MIN_BPM &&
+                                      bpm <= Constants.MAX_BPM) {
+                                      wc.setDelay((long)(60_000 / bpm));
+                                  }
+                              }
+                          }
+                        });
+                    
+                    runButton.setText("Stop");
+                    
+                    if (pedalPositionOptionCheckBox.isSelected()) {
+                        wc.setPedalPosition(Constants.PEDAL_POSITION_TOE_DOWN);
+                    }
                     new SwingWorker<WhammyController, Void>() {
                         @Override
                         public WhammyController doInBackground() {
@@ -247,11 +307,9 @@ public class SwingFrame extends JFrame {
                 else {
                     wc.stopRunning();
                     runButton.setText("Run");
-                    delayTextField.setEditable(true);
                     running = false;
                 }
             }
         });
     }
-    
 }

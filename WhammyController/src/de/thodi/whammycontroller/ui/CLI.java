@@ -19,7 +19,7 @@ public class CLI {
         WhammyController c = new WhammyController(w);
         Effect[] e = w.getBuiltinEffects();
 
-        WhammyMIDIDevice[] devices = WhammyMIDIDevice.getSupportedDevices();
+        WhammyMIDIDevice[] devices = WhammyMIDIHelper.getSupportedDevices();
         if (devices.length > 0) {
             c.setMIDIDevice(devices[0]);
             c.connect();

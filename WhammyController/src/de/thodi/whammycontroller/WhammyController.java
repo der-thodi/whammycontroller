@@ -22,7 +22,13 @@ public class WhammyController implements Runnable {
 
 
     public void setMIDIDevice(WhammyMIDIDevice pDevice) {
-        device = pDevice;
+        logger.info("Device: '" + pDevice + "'");
+        if (pDevice.isSupported()) {
+            device = pDevice;
+        }
+        else {
+            device = new FakeWhammyMIDIDevice();
+        }
     }
     
     
@@ -30,8 +36,7 @@ public class WhammyController implements Runnable {
         int changeNumber;
         int pedalPosition = pEffect.getPedalPosition();
         
-        logger.info("Setting effect '" + pEffect + "', pedal at '" + 
-                    pedalPosition + "'");
+        logger.info("Setting effect '" + pEffect + "'");
         if (pEffect instanceof BypassEffect)  {
             if (currentEffect == null) {
                 // First ever effect is bypass -> do nothing
@@ -45,14 +50,25 @@ public class WhammyController implements Runnable {
             changeNumber = pEffect.getActiveProgramChangeNumber();
             currentEffect = pEffect;
         }
-        //device.sendProgramChangeMessage(changeNumber);
+        
+        device.sendProgramChangeMessage(changeNumber);
+        
         if (pedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
             pedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
-            //device.sendContinuousControlMessage(pPedalPosition);
+            setPedalPosition(pedalPosition);
         }
     }
 
 
+    public void setPedalPosition(int pPedalPosition) {
+        if (pPedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
+                pPedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
+            logger.info("Setting pedal at " + pPedalPosition);
+            device.sendContinuousControlMessage(pPedalPosition);
+        }
+    }
+    
+    
     public void setChannel(int pChannel) {
         device.setChannel(pChannel);
     }
