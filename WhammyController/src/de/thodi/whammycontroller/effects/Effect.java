@@ -22,12 +22,14 @@ public class Effect {
         if (!(this instanceof BypassEffect)) {
             if (pActive < Constants.MIDI_PC_MIN ||
                 pActive > Constants.MIDI_PC_MAX) {
-                throw new IllegalArgumentException("pActive not in range");
+                throw new IllegalArgumentException("pActive not in range: " +
+                                                   pActive);
             }
     
-            if (pActive < Constants.MIDI_PC_MIN ||
-                pActive > Constants.MIDI_PC_MAX) {
-                throw new IllegalArgumentException("pBypass not in range");
+            if (pBypass < Constants.MIDI_PC_MIN ||
+                pBypass > Constants.MIDI_PC_MAX) {
+                throw new IllegalArgumentException("pBypass not in range: " + 
+                                                   pBypass);
             }
             if (pPedalPosition != Constants.IGNORE_PEDAL_POSITION && 
                 (pPedalPosition < Constants.PEDAL_POSITION_TOE_UP ||
