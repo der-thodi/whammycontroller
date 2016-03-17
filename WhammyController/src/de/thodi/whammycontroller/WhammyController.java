@@ -12,7 +12,7 @@ public class WhammyController implements Runnable {
     private WhammyMIDIDevice device;
     private Logger logger = Logger.getLogger("de.thodi.whammycontroller");
     private boolean stopThread = false;
-    private Effect currentEffect;
+    //private Effect currentEffect;
 
 
     public WhammyController(Whammy pWhammy) {
@@ -37,32 +37,52 @@ public class WhammyController implements Runnable {
         int pedalPosition = pEffect.getPedalPosition();
         
         logger.info("Setting effect '" + pEffect + "'");
-        if (pEffect instanceof BypassEffect)  {
-            if (currentEffect == null) {
-                // TODO
-                // First ever effect is bypass -> send no change command
-                // this is wrong, of course, since an effect could curently
-                // be selected
-                changeNumber = Constants.MIDI_PC_MIN - 1;
-            }
-            else {
-                changeNumber = currentEffect.getBypassProgramChangeNumber();                
-            }
+        if (pEffect instanceof BypassEffect) {
+            changeNumber = Constants.MIDI_PC_MIN - 1;
+            pedalPosition = Constants.PEDAL_POSITION_TOE_UP;
         }
         else {
             changeNumber = pEffect.getActiveProgramChangeNumber();
-            currentEffect = pEffect;
+            //currentEffect = pEffect;
+            pedalPosition = Constants.PEDAL_POSITION_TOE_DOWN;
         }
-        
+
         if (changeNumber >= Constants.MIDI_PC_MIN && 
             changeNumber <= Constants.MIDI_PC_MAX) {
             device.sendProgramChangeMessage(changeNumber);
         }
-        
+
         if (pedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
             pedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
             setPedalPosition(pedalPosition);
         }
+        
+//        if (pEffect instanceof BypassEffect)  {
+//            if (currentEffect == null) {
+//                // TODO
+//                // First ever effect is bypass -> send no change command
+//                // this is wrong, of course, since an effect could currently
+//                // be selected
+//                changeNumber = Constants.MIDI_PC_MIN - 1;
+//            }
+//            else {
+//                changeNumber = currentEffect.getBypassProgramChangeNumber();                
+//            }
+//        }
+//        else {
+//            changeNumber = pEffect.getActiveProgramChangeNumber();
+//            currentEffect = pEffect;
+//        }
+//        
+//        if (changeNumber >= Constants.MIDI_PC_MIN && 
+//            changeNumber <= Constants.MIDI_PC_MAX) {
+//            device.sendProgramChangeMessage(changeNumber);
+//        }
+//        
+//        if (pedalPosition >= Constants.PEDAL_POSITION_TOE_UP && 
+//            pedalPosition <= Constants.PEDAL_POSITION_TOE_DOWN) {
+//            setPedalPosition(pedalPosition);
+//        }
     }
 
 
