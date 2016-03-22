@@ -34,6 +34,8 @@ public class SwingFrame extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
+        //logger.setLevel(Level.WARNING);
+        
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -259,6 +261,32 @@ public class SwingFrame extends JFrame {
         ccValueField.setColumns(10);
         
         initializePCSendButton(ccSendButton, ccTextField, ccValueField);
+        
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        JMenuBar menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+        
+        JMenu mnLogging = new JMenu("Log Level");
+        menuBar.add(mnLogging);
+        
+        JRadioButtonMenuItem finestRadioButton = new JRadioButtonMenuItem("FINEST");
+        mnLogging.add(finestRadioButton);
+        
+        JRadioButtonMenuItem infoRadioButton = new JRadioButtonMenuItem("INFO");
+        infoRadioButton.setSelected(true);
+        mnLogging.add(infoRadioButton);
+        
+        JRadioButtonMenuItem warningRadioButton = new JRadioButtonMenuItem("WARNING");
+        mnLogging.add(warningRadioButton);
+        
+        JRadioButtonMenuItem severeRadioButton = new JRadioButtonMenuItem("SEVERE");
+        mnLogging.add(severeRadioButton);
+        
+        ButtonGroup loglevelGroup = new ButtonGroup();
+        loglevelGroup.add(finestRadioButton);
+        loglevelGroup.add(infoRadioButton);
+        loglevelGroup.add(warningRadioButton);
+        loglevelGroup.add(severeRadioButton);
     }
 
 
@@ -337,6 +365,7 @@ public class SwingFrame extends JFrame {
                     channel = (Integer)channelComboBox.getSelectedItem();
                     midiDevice =
                             (WhammyMIDIDevice)receiverComboBox.getSelectedItem();
+ // TODO Catch NumberFormatException
                     long delay = (long)(60_000 / 
                             Long.parseLong(bpmTextField.getText()));                    
                     
@@ -370,10 +399,14 @@ public class SwingFrame extends JFrame {
                               String bpmString = bpmTextField.getText();
                               
                               if (!bpmString.trim().isEmpty()) {
+                                  try {
                                   long bpm = Long.parseLong(bpmString);
-                                  if (bpm >= Constants.MIN_BPM &&
-                                      bpm <= Constants.MAX_BPM) {
-                                      wc.setDelay((long)(60_000 / bpm));
+                                      if (bpm >= Constants.MIN_BPM &&
+                                          bpm <= Constants.MAX_BPM) {
+                                          wc.setDelay((long)(60_000 / bpm));
+                                      }
+                                  } catch (NumberFormatException ex) {
+                                      // TODO
                                   }
                               }
                           }

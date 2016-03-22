@@ -135,11 +135,32 @@ public class WhammyController implements Runnable {
                     enabledEffects.addElement(allEffects[i]);
                 }
             }
+    
             
             Random r = new Random();
+            
+            // A little calibration
+            //long millisBefore = System.currentTimeMillis();
+            //setEffect(enabledEffects.elementAt(r.nextInt(enabledEffects.size())));
+            //Thread.sleep(10);
+            //long millisAfter = System.currentTimeMillis();
+            //long epsilon = millisAfter - 10 - millisBefore;
+            //logger.warning("Epsilon: " + epsilon);
+            
+            long epsilon = 0;
             while (stopThread == false) {
+                long sleepStart = System.currentTimeMillis();
                 setEffect(enabledEffects.elementAt(r.nextInt(enabledEffects.size())));
-                Thread.sleep(delay);
+                Thread.sleep(delay - epsilon);
+                long sleepDuration = System.currentTimeMillis() - sleepStart;
+                if (sleepDuration != delay) {
+                    //logger.warning("Took " + sleepDuration + 
+                    //               " instead of " + delay);
+                    if (sleepDuration > delay) {
+                        epsilon = sleepDuration - delay;
+                        logger.config("e -> " + epsilon);
+                    }
+                }
             }
             stopThread = false;
         }
