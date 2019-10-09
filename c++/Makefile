@@ -10,6 +10,9 @@ OBJS=$(subst .cpp,.o,$(subst $(SRCDIR)/,$(OBJDIR)/,$(SRCS)))
 
 EXE=whammycontroller
 
+.PHONY:
+	mkdir -p $(OBJDIR)
+
 all: $(EXE)
 
 whammycontroller: $(OBJS)
