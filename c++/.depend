@@ -1,6 +1,0 @@
-cli.o: src/cli.cpp include/constants.h include/effect.h \
-  include/harmonyeffect.h
-constants.o: src/constants.cpp include/constants.h
-effect.o: src/effect.cpp include/effect.h include/constants.h
-harmonyeffect.o: src/harmonyeffect.cpp include/harmonyeffect.h \
-  include/effect.h include/constants.h
