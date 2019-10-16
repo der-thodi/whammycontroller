@@ -10,16 +10,18 @@ OBJS=$(subst .cpp,.o,$(subst $(SRCDIR)/,$(OBJDIR)/,$(SRCS)))
 
 EXE=whammycontroller
 
-.PHONY:
-	mkdir -p $(OBJDIR)
+.PHONY: distclean clean
 
 all: $(EXE)
 
 whammycontroller: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJDIR)/%.o: $(OBJDIR) $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
 
 depend: .depend
 
