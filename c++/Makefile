@@ -12,12 +12,12 @@ EXE=whammycontroller
 
 .PHONY: distclean clean
 
-all: $(EXE)
+all: $(OBJDIR) $(EXE)
 
 whammycontroller: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $(EXE) $(OBJS)
 
-$(OBJDIR)/%.o: $(OBJDIR) $(SRCDIR)/%.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJDIR):
